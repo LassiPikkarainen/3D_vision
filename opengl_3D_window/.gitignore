@@ -1,0 +1,10 @@
+.vscode
+build
+CMakeFiles
+Debug
+_deps
+Test.dir
+x64
+*.vcxproj*
+*.vcxproj
+*.sln

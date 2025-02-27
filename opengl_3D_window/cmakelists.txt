@@ -1,0 +1,27 @@
+cmake_minimum_required(VERSION 3.3)
+project(3D_glasses)
+
+#add_executable(Test opengl_test.cpp)
+
+add_executable(Test main.cpp window.cpp)
+
+include(FetchContent)
+
+#FetchContent_Declare(
+#    glfw
+#    GIT_REPOSITORY https://github.com/glfw/glfw
+#    GIT_TAG "master"
+#    GIT_SHALLOW 1
+#)
+
+#FetchContent_MakeAvailable(glfw)
+
+add_subdirectory(libs/glad/)
+
+add_subdirectory(libs/glfw/)
+
+add_subdirectory(libs/glm/)
+
+include_directories(common)
+
+target_link_libraries(Test PRIVATE glfw glad glm)
