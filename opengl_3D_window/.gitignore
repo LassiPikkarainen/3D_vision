@@ -8,3 +8,5 @@ x64
 *.vcxproj*
 *.vcxproj
 *.sln
+CMakeCache.txt
+cmake_install.cmake
