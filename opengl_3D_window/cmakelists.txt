@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
 project(3D_glasses)
 
+add_definitions(-D GLM_ENABLE_EXPERIMENTAL)
 #add_executable(Test opengl_test.cpp)
 
 add_executable(Test main.cpp window.cpp)

@@ -30,8 +30,9 @@ public:
     void Run();
 
     void UpdateViews(glm::mat4 view_to_use);
-
-
+    glm::mat4 getStereoViewMatrix(bool left);
+    glm::mat4 getStereoProjectionMatrix(bool left);
+    glm::mat4 computeMVPMatrix(bool left);
 
 private:
     GLFWwindow* w;
@@ -145,6 +146,8 @@ private:
     glm::mat4 model; //placement for model
     glm::mat4 mvp_left; // model view matrix (left and right eyes)
     glm::mat4 mvp_right;
+
+    glm::vec3 cameraPos = glm::vec3(4,3,4);
 
 };
 
