@@ -163,17 +163,17 @@ Window {
 
                         Button {
                             text: "100 us"
-                            onClicked: controller.initCommsClicked()
+                            onClicked: controller.delay1Clicked()
                         }
 
                         Button {
                             text: "500 us"
-                            onClicked: controller.initCommsClicked()
+                            onClicked: controller.delay2Clicked()
                         }
 
                         Button {
                             text: "1 ms"
-                            onClicked: controller.initCommsClicked()
+                            onClicked: controller.delay3Clicked()
                         }
 
                     }
@@ -187,7 +187,7 @@ Window {
 
                         Button {
                             text: "Swap"
-                            onClicked: controller.initCommsClicked()
+                            onClicked: controller.swapClicked()
                         }
                     }
 
@@ -196,7 +196,7 @@ Window {
                         spacing: 10
                         Button {
                             text: "Back To Setup"
-                            onClicked: controller.initCommsClicked()
+                            onClicked: controller.setupClicked()
                         }
                     }
                 }

@@ -5,6 +5,7 @@
 #include <QQmlEngine>
 #include <QString>
 #include "serialwriter.h"
+#include <QTimer>
 
 class IRController : public QObject
 {
@@ -23,11 +24,22 @@ public:
     Q_INVOKABLE void setFrameTimeText(const QString &text);
     Q_INVOKABLE void setDeadTimeText(const QString &text);
 
+
+    //runtime buttons
+    Q_INVOKABLE void delay1Clicked();
+    Q_INVOKABLE void delay2Clicked();
+    Q_INVOKABLE void delay3Clicked();
+    Q_INVOKABLE void swapClicked();
+    Q_INVOKABLE void setupClicked();
+
+    void readTimerTick();
+
 private:
     QString comport = "";
     QString frametime = "";
     QString deadtime = "";
     SerialWriter *s;
+    QTimer *readtimer;
 
 signals:
     void comportTextChanged();

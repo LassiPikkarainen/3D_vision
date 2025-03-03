@@ -2,11 +2,15 @@
 #include <QDebug>
 #include <QString>
 #include "serialwriter.h"
+#include <QTimer>
 
 IRController::IRController(QObject *parent): QObject{parent}
 {
     s = new SerialWriter();
     //QString str = "COM3";
+
+    readtimer = new QTimer(this);
+    connect(readtimer, &QTimer::timeout, this, &IRController::readTimerTick);
 }
 
 Q_INVOKABLE void IRController::testButtonClicked()
@@ -16,25 +20,62 @@ Q_INVOKABLE void IRController::testButtonClicked()
 
 Q_INVOKABLE void IRController::initCommsClicked()
 {
-    qDebug() << "com port name: " << comport;
+    //qDebug() << "com port name: " << comport;
     s->Init(comport);
+    readtimer->start(1000);
 }
 
 Q_INVOKABLE void IRController::setFrameTimeClicked()
 {
-    qDebug() << "Frametime: " << frametime;
+    s->WriteCommand('S', frametime);
+    //qDebug() << "Frametime: " << frametime;
 }
 
 Q_INVOKABLE void IRController::setDeadTimeClicked()
 {
-    qDebug() << "Deadtime: " << deadtime;
+    s->WriteCommand('D', deadtime);
+    //qDebug() << "Deadtime: " << deadtime;
 }
 
 
 Q_INVOKABLE void IRController::runClicked()
 {
-    qDebug() << "RUN!";
+    s->WriteCommand('R');
+    //qDebug() << "RUN!";
 }
+
+//runtime buttons
+
+Q_INVOKABLE void IRController::delay1Clicked()
+{
+    s->WriteCommand('I');
+    //qDebug() << "RUN!";
+}
+
+Q_INVOKABLE void IRController::delay2Clicked()
+{
+    s->WriteCommand('J');
+    //qDebug() << "RUN!";
+}
+
+Q_INVOKABLE void IRController::delay3Clicked()
+{
+    s->WriteCommand('K');
+    //qDebug() << "RUN!";
+}
+
+Q_INVOKABLE void IRController::swapClicked()
+{
+    s->WriteCommand('W');
+    //qDebug() << "RUN!";
+}
+
+Q_INVOKABLE void IRController::setupClicked()
+{
+    s->WriteCommand('E');
+    //qDebug() << "RUN!";
+}
+
 
 Q_INVOKABLE void IRController::setComportText(const QString &text)
 {
@@ -64,3 +105,8 @@ Q_INVOKABLE void IRController::setFrameTimeText(const QString &text)
     }
 }
 
+
+void IRController::readTimerTick()
+{
+    s->ReadSerial();
+}
