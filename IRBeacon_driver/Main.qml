@@ -223,26 +223,35 @@ Window {
                     y: 10; x: 10
                     font.pointSize: 11
                 }
-                TextArea {
-                        id: outputTextWindow
-                        anchors.top: outputBoxTitle.bottom;
-                        anchors.bottom: parent.bottom;
-                        anchors.left: parent.left;
-                        anchors.right: parent.right;
-                        anchors.margins: 10;
-                        wrapMode: Text.Wrap
-                        readOnly: true  // Prevents user input (output-only)
-                        placeholderText: qsTr("Output from beacon")
-                        text: controller.outputText
-                        font.pixelSize: 16
-                        color: "black"
-                        background: Rectangle {
-                            color: "#f0f0f0"
-                            border.color: "#888"
-                            border.width: 1
-                            radius: 5
+                ScrollView {
+                    id:scrollView
+                    anchors.top: outputBoxTitle.bottom;
+                    anchors.bottom: outputBox.bottom;
+                    anchors.left: outputBox.left;
+                    anchors.right: outputBox.right;
+                    anchors.margins: 10;
+                    TextArea {
+                            id: outputTextWindow
+                            anchors.top: scrollView.top
+                            anchors.bottom: scrollView.bottom;
+                            anchors.left: scrollView.left;
+                            anchors.right: scrollView.right;
+                            wrapMode: Text.Wrap
+                            readOnly: true  // Prevents user input (output-only)
+                            placeholderText: qsTr("Output from beacon")
+                            text: controller.outputText
+                            font.pixelSize: 16
+                            color: "black"
+                            background: Rectangle {
+                                color: "#f0f0f0"
+                                border.color: "#888"
+                                border.width: 1
+                                radius: 5
+                            }
                         }
-                    }
+                }
+
+
 
 
 

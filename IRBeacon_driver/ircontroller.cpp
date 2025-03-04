@@ -123,12 +123,13 @@ Q_INVOKABLE void IRController::setFrameTimeText(const QString &text)
 
 Q_INVOKABLE void IRController::setOutputText(QString str)
 {
-    if (str != outputText)
-    {
-        outputText = str;
-        emit outputTextChanged();
-    }
-    qDebug() << "read from serial " << outputText;
+    //format incoming text for the output text box
+    str.replace("\n", " ");
+    str.replace("\r", " | ");
+    outputText.append(str).append("\n");
+    emit outputTextChanged();
+
+    qDebug() << "read from serial " << str;
 
 }
 
