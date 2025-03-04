@@ -11,15 +11,24 @@
 #include <chrono>
 #include <thread>
 #include <QString>
+#include <QObject>
+#include <QQmlEngine>
 
-class SerialWriter
+class SerialWriter : public QObject
 {
+    Q_OBJECT
+
 public:
-    SerialWriter();
+    explicit SerialWriter(QObject *parent = nullptr);
     bool Init(QString name);
-    bool WriteCommand(char byte, QString param = "");
+
+public slots:
+    Q_INVOKABLE bool WriteCommand(char byte, QString param = "");
     //bool SetPort(QString name);
-    void ReadSerial();
+    Q_INVOKABLE void ReadSerial();
+
+signals:
+    void serialReceived(QString str);
 
 
 private:

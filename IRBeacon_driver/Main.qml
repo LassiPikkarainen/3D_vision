@@ -3,10 +3,15 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 Window {
+    id: qtWindow
     width: 480
     height: 680
     visible: true
     title: qsTr("IR Beacon Driver")
+    maximumHeight: height
+    maximumWidth: width
+    minimumHeight: height
+    minimumWidth: width
 
     Rectangle {
         id: mainpageBorder
@@ -30,7 +35,7 @@ Window {
             //setup form
             Rectangle {
                 id: setupFormBox
-                width: 450; height: 300
+                width: 450; height: childrenRect.height + 20
                 anchors.top: titleText.bottom;
                 anchors.left: parent.left;
                 anchors.margins: 10;
@@ -104,8 +109,6 @@ Window {
                         Button {
                             id: runButton
                             text: "RUN"
-                            width: 120
-                            height: 50
                             font.pixelSize: 18
                             font.bold: true
                             background: Rectangle {
@@ -130,10 +133,10 @@ Window {
 
             }
 
-            //setup form
+            //runtime form
             Rectangle {
                 id: controlFormBox
-                width: 450; height: 300
+                width: 450; height: childrenRect.height + 20
                 anchors.top: setupFormBox.bottom;
                 anchors.left: parent.left;
                 anchors.margins: 10;
@@ -202,6 +205,53 @@ Window {
                 }
 
             }
+
+            //output textbox
+            Rectangle {
+                id: outputBox
+                width: 450;
+                anchors.top: controlFormBox.bottom;
+                anchors.bottom: mainPage.bottom;
+                anchors.left: parent.left;
+                anchors.right: parent.right;
+                anchors.margins: 10;
+                color: "lightgray";
+
+                Text {
+                    id: outputBoxTitle
+                    text: "Output From Beacon"
+                    y: 10; x: 10
+                    font.pointSize: 11
+                }
+                TextArea {
+                        id: outputTextWindow
+                        anchors.top: outputBoxTitle.bottom;
+                        anchors.bottom: parent.bottom;
+                        anchors.left: parent.left;
+                        anchors.right: parent.right;
+                        anchors.margins: 10;
+                        wrapMode: Text.Wrap
+                        readOnly: true  // Prevents user input (output-only)
+                        placeholderText: qsTr("Output from beacon")
+                        text: controller.outputText
+                        font.pixelSize: 16
+                        color: "black"
+                        background: Rectangle {
+                            color: "#f0f0f0"
+                            border.color: "#888"
+                            border.width: 1
+                            radius: 5
+                        }
+                    }
+
+
+
+            }
+
+
+
+
+
         }
 
 

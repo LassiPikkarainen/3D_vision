@@ -3,14 +3,22 @@
 #include <QString>
 #include "serialwriter.h"
 #include <QTimer>
+#include <QThread>
 
 IRController::IRController(QObject *parent): QObject{parent}
 {
-    s = new SerialWriter();
-    //QString str = "COM3";
 
+    commThread = new QThread();
+    s = new SerialWriter();
+    s->moveToThread(commThread);
+    commThread->start();
     readtimer = new QTimer(this);
     connect(readtimer, &QTimer::timeout, this, &IRController::readTimerTick);
+
+    connect(commThread, &QThread::started, s, &SerialWriter::ReadSerial);
+
+    connect(s, &SerialWriter::serialReceived, this, &IRController::receivedFromSerial);
+    //QObject::connect(commThread, &QThread::started, s, &SerialWriter::WriteCommand);
 }
 
 Q_INVOKABLE void IRController::testButtonClicked()
@@ -27,53 +35,47 @@ Q_INVOKABLE void IRController::initCommsClicked()
 
 Q_INVOKABLE void IRController::setFrameTimeClicked()
 {
-    s->WriteCommand('S', frametime);
+    invokeCommThreadWrite('S', frametime);
     //qDebug() << "Frametime: " << frametime;
 }
 
 Q_INVOKABLE void IRController::setDeadTimeClicked()
 {
-    s->WriteCommand('D', deadtime);
+    invokeCommThreadWrite('D', deadtime);
     //qDebug() << "Deadtime: " << deadtime;
 }
 
 
 Q_INVOKABLE void IRController::runClicked()
 {
-    s->WriteCommand('R');
-    //qDebug() << "RUN!";
+    invokeCommThreadWrite('R');
 }
 
 //runtime buttons
 
 Q_INVOKABLE void IRController::delay1Clicked()
 {
-    s->WriteCommand('I');
-    //qDebug() << "RUN!";
+    invokeCommThreadWrite('I');
 }
 
 Q_INVOKABLE void IRController::delay2Clicked()
 {
-    s->WriteCommand('J');
-    //qDebug() << "RUN!";
+    invokeCommThreadWrite('J');
 }
 
 Q_INVOKABLE void IRController::delay3Clicked()
 {
-    s->WriteCommand('K');
-    //qDebug() << "RUN!";
+    invokeCommThreadWrite('K');
 }
 
 Q_INVOKABLE void IRController::swapClicked()
 {
-    s->WriteCommand('W');
-    //qDebug() << "RUN!";
+    invokeCommThreadWrite('W');
 }
 
 Q_INVOKABLE void IRController::setupClicked()
 {
-    s->WriteCommand('E');
-    //qDebug() << "RUN!";
+    invokeCommThreadWrite('E');
 }
 
 
@@ -84,6 +86,20 @@ Q_INVOKABLE void IRController::setComportText(const QString &text)
         comport = text;
         emit comportTextChanged();
     }
+}
+
+void IRController::invokeCommThreadWrite(char command, QString str)
+{
+    qDebug() << "invoking write at" << commThread <<"from " << QThread::currentThread();
+    QMetaObject::invokeMethod(s, "WriteCommand", Qt::QueuedConnection, Q_ARG(char, command), Q_ARG(QString, str));
+}
+
+void IRController::invokeRead()
+{
+    //qDebug() << "invoking read at" << commThread <<"from " << QThread::currentThread();
+    QString ret;
+    QMetaObject::invokeMethod(s, "ReadSerial", Qt::QueuedConnection);
+    //qDebug() << "read from serial" << ret;
 }
 
 
@@ -105,8 +121,28 @@ Q_INVOKABLE void IRController::setFrameTimeText(const QString &text)
     }
 }
 
+Q_INVOKABLE void IRController::setOutputText(QString str)
+{
+    if (str != outputText)
+    {
+        outputText = str;
+        emit outputTextChanged();
+    }
+    qDebug() << "read from serial " << outputText;
+
+}
+
 
 void IRController::readTimerTick()
 {
-    s->ReadSerial();
+    //s->ReadSerial();
+    invokeRead();
 }
+
+void IRController::receivedFromSerial(QString str)
+{
+    setOutputText(str);
+}
+
+
+

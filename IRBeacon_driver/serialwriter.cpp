@@ -10,32 +10,34 @@
 #include <thread>
 #include<QDebug>
 #include <QString>
+#include <QThread>
 
-
-SerialWriter::SerialWriter()
+SerialWriter::SerialWriter(QObject *parent): QObject{parent}
 {
 
 }
 
 //setup the connection
-bool SerialWriter::Init(QString name)
+Q_INVOKABLE bool SerialWriter::Init(QString name)
 {
 
 
-    //wComport = (const wchar_t*) name.utf16();
+    wComport = (const wchar_t*) name.utf16(); //filename must be in a wchar_t format ??
     //qDebug() << std::string(wComport);
-    hSerial = CreateFileW( L"COM3", GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL );
+    //hSerial = CreateFileW( L"COM3", GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL );
+    hSerial = CreateFileW( wComport, GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL );
+
     if (hSerial == INVALID_HANDLE_VALUE)
     {
-        qInfo("Error\n");
+        qInfo("Error while creating file handle for serial communication");
         return false;
     }
-    else qInfo("Succesfully created file handle\n");
+    else qInfo("Succesfully created file handle");
 
     dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
     if (GetCommState(hSerial, &dcbSerialParams) == 0)
     {
-        qInfo("Error getting device state\n");
+        qInfo("Error getting device state");
         CloseHandle(hSerial);
         return false;
     }
@@ -46,7 +48,7 @@ bool SerialWriter::Init(QString name)
     dcbSerialParams.Parity = NOPARITY;
     if(SetCommState(hSerial, &dcbSerialParams) == 0)
     {
-        qInfo("Error setting device parameters\n");
+        qInfo("Error setting device parameters");
         CloseHandle(hSerial);
         return false;
     }
@@ -59,11 +61,11 @@ bool SerialWriter::Init(QString name)
     timeouts.WriteTotalTimeoutMultiplier = 10;
     if(SetCommTimeouts(hSerial, &timeouts) == 0)
     {
-        qInfo("Error setting timeouts\n");
+        qInfo("Error setting timeouts");
         CloseHandle(hSerial);
         return false;
     }
-    qInfo("COM port setup succesful \n");
+    qInfo("COM port setup succesful");
 
 
     return true;
@@ -71,12 +73,13 @@ bool SerialWriter::Init(QString name)
 
 
 //writes a char to the COM port
-bool SerialWriter::WriteCommand(char byte, QString param)
+Q_INVOKABLE bool SerialWriter::WriteCommand(char byte, QString param)
 {
+    qDebug() << "Running in thread:" << QThread::currentThread();
     if (param.isEmpty()) {
         if(!WriteFile(hSerial, &byte, 1, NULL, NULL))
         {
-            printf("Error\n");
+            printf("Error");
             CloseHandle(hSerial);
             return false;
         }
@@ -99,8 +102,9 @@ bool SerialWriter::WriteCommand(char byte, QString param)
     return true;
 }
 
-void SerialWriter::ReadSerial()
+Q_INVOKABLE void SerialWriter::ReadSerial()
 {
+    //qDebug() << "Running in thread:" << QThread::currentThread();
     unsigned long bytesRead;
     char responsebuffer[40];
     memset(responsebuffer, 0, sizeof(responsebuffer));
@@ -111,6 +115,7 @@ void SerialWriter::ReadSerial()
     if (bytesRead > 0)
     {
         qDebug() << readstr;
+        emit serialReceived(QString::fromStdString(readstr)); //emit signal that the main thread can catch
     }
 
 }
