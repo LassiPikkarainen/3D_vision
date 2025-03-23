@@ -29,7 +29,7 @@ public slots:
 
 signals:
     void serialReceived(QString str);
-
+    void writeToOutputBox(QString str);
 
 private:
     HANDLE hSerial;

@@ -21,7 +21,7 @@ SerialWriter::SerialWriter(QObject *parent): QObject{parent}
 Q_INVOKABLE bool SerialWriter::Init(QString name)
 {
 
-
+    emit writeToOutputBox(QString("Setting up serial comms [%1]").arg(name));
     wComport = (const wchar_t*) name.utf16(); //filename must be in a wchar_t format ??
     //qDebug() << std::string(wComport);
     //hSerial = CreateFileW( L"COM3", GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL );
@@ -29,15 +29,21 @@ Q_INVOKABLE bool SerialWriter::Init(QString name)
 
     if (hSerial == INVALID_HANDLE_VALUE)
     {
+        emit writeToOutputBox("Error while creating file handle for serial communication");
         qInfo("Error while creating file handle for serial communication");
         return false;
     }
-    else qInfo("Succesfully created file handle");
+    else
+    {
+        emit writeToOutputBox("Succesfully created file handle");
+        qInfo("Succesfully created file handle");
+    }
 
     dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
     if (GetCommState(hSerial, &dcbSerialParams) == 0)
     {
         qInfo("Error getting device state");
+        emit writeToOutputBox("Error getting device state");
         CloseHandle(hSerial);
         return false;
     }
@@ -48,6 +54,7 @@ Q_INVOKABLE bool SerialWriter::Init(QString name)
     dcbSerialParams.Parity = NOPARITY;
     if(SetCommState(hSerial, &dcbSerialParams) == 0)
     {
+        emit writeToOutputBox("Error setting device parameters");
         qInfo("Error setting device parameters");
         CloseHandle(hSerial);
         return false;
@@ -61,10 +68,12 @@ Q_INVOKABLE bool SerialWriter::Init(QString name)
     timeouts.WriteTotalTimeoutMultiplier = 10;
     if(SetCommTimeouts(hSerial, &timeouts) == 0)
     {
+        emit writeToOutputBox("Error setting timeouts");
         qInfo("Error setting timeouts");
         CloseHandle(hSerial);
         return false;
     }
+    emit writeToOutputBox("COM port setup succesful");
     qInfo("COM port setup succesful");
 
 
@@ -79,7 +88,7 @@ Q_INVOKABLE bool SerialWriter::WriteCommand(char byte, QString param)
     if (param.isEmpty()) {
         if(!WriteFile(hSerial, &byte, 1, NULL, NULL))
         {
-            printf("Error");
+            emit writeToOutputBox("Could not write to serial, re-initialize comms");
             CloseHandle(hSerial);
             return false;
         }
@@ -95,7 +104,7 @@ Q_INVOKABLE bool SerialWriter::WriteCommand(char byte, QString param)
     qDebug() << command;
     if(!WriteFile(hSerial, command, commandlen, NULL, NULL))
     {
-        printf("Error\n");
+        emit serialReceived("Could not write to serial, re-initialize comms");
         CloseHandle(hSerial);
         return false;
     }

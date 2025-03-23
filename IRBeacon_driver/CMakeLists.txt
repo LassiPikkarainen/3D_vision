@@ -20,6 +20,8 @@ qt_add_qml_module(appIRBeacon_driver
         SOURCES serialwriter.h serialwriter.cpp
         SOURCES
         SOURCES ircontroller.h ircontroller.cpp
+        SOURCES
+        SOURCES
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

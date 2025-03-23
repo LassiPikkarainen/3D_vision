@@ -24,10 +24,14 @@ Window {
             width: 470; height: 670
             y: 5; x: 5
             color: "white"
+            radius: 10  // Rounded corners
+            border.color: "#b3b3b3"  // Dark gray border
+            border.width: 2
 
             Text {
                 id: titleText
                 text: "Set parameters and control IR beacon"
+                font.bold: true
                 y: 10; x: 10
                 font.pointSize: 14
             }
@@ -39,11 +43,15 @@ Window {
                 anchors.top: titleText.bottom;
                 anchors.left: parent.left;
                 anchors.margins: 10;
-                color: "lightgray"
+                color: "#f5f5f5"  // Light gray background
+                radius: 10  // Rounded corners
+                border.color: "#b3b3b3"  // Dark gray border
+                border.width: 2
 
                 Text {
                     id: setupTitle
                     text: "Setup Device"
+                    font.bold: true
                     y: 10; x: 10
                     font.pointSize: 11
                 }
@@ -108,18 +116,17 @@ Window {
 
                         Button {
                             id: runButton
-                            text: "RUN"
-                            font.pixelSize: 18
+                            text: "Run Beacon"
+                            font.pixelSize: 14
                             font.bold: true
+                            highlighted: true
+                            flat: true
                             background: Rectangle {
                                 id: bg
-                                radius: 25
-                                color: runButton.pressed ? "#0056b3" : (runButton.hovered ? "#0077cc" : "#0088ff")
-                                gradient: Gradient {
-                                    GradientStop { position: 0.0; color: "#0099ff" }
-                                    GradientStop { position: 1.0; color: "#0055aa" }
-                                }
-                                border.color: "#004488"
+                                radius: 5
+                                color: parent.down ? "#DBEAF1" : (parent.hovered ? "#DBEAF1": "#DBEAF1")
+
+                                border.color: "#55595C"
                                 border.width: 2
                             }
                             onClicked: controller.runClicked()
@@ -140,11 +147,15 @@ Window {
                 anchors.top: setupFormBox.bottom;
                 anchors.left: parent.left;
                 anchors.margins: 10;
-                color: "lightgray"
+                color: "#f5f5f5"  // Light gray background
+                radius: 10  // Rounded corners
+                border.color: "#b3b3b3"  // Dark gray border
+                border.width: 2
 
                 Text {
                     id: controlTitle
                     text: "Control 3D Glasses (Runtime)"
+                    font.bold: true
                     y: 10; x: 10
                     font.pointSize: 11
                 }
@@ -199,6 +210,18 @@ Window {
                         spacing: 10
                         Button {
                             text: "Back To Setup"
+                            font.pixelSize: 14
+                            font.bold: true
+                            highlighted: true
+                            flat: true
+                            background: Rectangle {
+                                id: bg2
+                                radius: 5
+                                color: parent.down ? "#DBEAF1" : (parent.hovered ? "#DBEAF1": "#DBEAF1")
+
+                                border.color: "#55595C"
+                                border.width: 2
+                            }
                             onClicked: controller.setupClicked()
                         }
                     }
@@ -215,10 +238,13 @@ Window {
                 anchors.left: parent.left;
                 anchors.right: parent.right;
                 anchors.margins: 10;
-                color: "lightgray";
-
+                color: "#f5f5f5"  // Light gray background
+                radius: 10  // Rounded corners
+                border.color: "#b3b3b3"  // Dark gray border
+                border.width: 2
                 Text {
                     id: outputBoxTitle
+                    font.bold: true
                     text: "Output From Beacon"
                     y: 10; x: 10
                     font.pointSize: 11
@@ -232,18 +258,18 @@ Window {
                     anchors.margins: 10;
                     TextArea {
                             id: outputTextWindow
-                            anchors.top: scrollView.top
-                            anchors.bottom: scrollView.bottom;
-                            anchors.left: scrollView.left;
-                            anchors.right: scrollView.right;
+                            anchors.top: outputBox.top
+                            anchors.bottom: outputBox.bottom;
+                            anchors.left: outputBox.left;
+                            anchors.right: outputBox.right;
                             wrapMode: Text.Wrap
                             readOnly: true  // Prevents user input (output-only)
                             placeholderText: qsTr("Output from beacon")
                             text: controller.outputText
-                            font.pixelSize: 16
-                            color: "black"
+                            font.pixelSize: 12
+                            color: "grey"
                             background: Rectangle {
-                                color: "#f0f0f0"
+                                color: "#FAFAFA"
                                 border.color: "#888"
                                 border.width: 1
                                 radius: 5
